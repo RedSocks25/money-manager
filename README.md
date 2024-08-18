@@ -16,7 +16,13 @@ Now is time to create the instance of the DB for your project using Prisma
 
 1. Create a copy of the `.env.template` and name it just `.env`
 2. Replace the environment variables
-3.
+
+Run the following commands
+
+```bash
+npx prisma init
+npx prisma migrate dev
+```
 
 ### Server
 

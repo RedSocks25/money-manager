@@ -12,3 +12,72 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model User {
+  id        Int @id @default(autoincrement())
+  name      String
+  lastname  String
+  email     String @unique
+  username  String @unique
+  password  String
+  accounts  Account[]
+}
+
+model AccountType {
+  id       Int @id @default(autoincrement())
+  type     String @unique
+  accounts Account[]
+}
+
+model Currency {
+  id       Int @id @default(autoincrement())
+  code     String @unique
+  name     String
+  accounts Account[]
+}
+
+model Account {
+  id             Int @id @default(autoincrement())
+  name           String
+  description    String?
+  balance        Float
+  userId         Int
+  user           User @relation(fields: [userId], references: [id])
+  accountTypeId  Int
+  accountType    AccountType @relation(fields: [accountTypeId], references: [id])
+  currencyId     Int
+  currency       Currency @relation(fields: [currencyId], references: [id])
+  transactions   Transaction[]
+}
+
+model TransactionType {
+  id            Int @id @default(autoincrement())
+  type          String @unique
+  transactions  Transaction[]
+  categories    Category[] @relation("TransactionTypeToCategory")
+}
+
+model Category {
+  id                Int @id @default(autoincrement())
+  name              String
+  transactionTypeId Int?
+  transactionType   TransactionType? @relation("TransactionTypeToCategory", fields: [transactionTypeId], references: [id])
+  parentId          Int?
+  parent            Category? @relation("CategoryToCategory", fields: [parentId], references: [id])
+  subcategories     Category[] @relation("CategoryToCategory")
+  transactions      Transaction[]
+}
+
+model Transaction {
+  id                Int @id @default(autoincrement())
+  amount            Float
+  date              DateTime
+  note              String?
+  description       String?
+  categoryId        Int
+  category          Category @relation(fields: [categoryId], references: [id])
+  accountId         Int
+  account           Account @relation(fields: [accountId], references: [id])
+  transactionTypeId Int
+  transactionType   TransactionType @relation(fields: [transactionTypeId], references: [id])
+}

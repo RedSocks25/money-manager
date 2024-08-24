@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server";
+
 import prisma from "@/lib/prisma";
 import { httpStatus } from "@/constants/httpStatus";
+import { categorySchema } from "@/validations/category";
 
-import { categorySchema } from "@/validations/categoryValidations";
 
 /**
  * Handles GET requests to fetch all categories.

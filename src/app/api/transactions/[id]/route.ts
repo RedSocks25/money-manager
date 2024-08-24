@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
+
 import prisma from "@/lib/prisma";
 import { httpStatus } from "@/constants/httpStatus";
+import { updateTransactionSchema } from "@/validations/transaction";
 
 
 interface Segments {
@@ -44,12 +46,19 @@ export async function GET(request: Request, { params }: Segments) {
  */
 export async function PUT(request: Request, { params }: Segments) {
 
-  const { id } = params;
-  const { date, amount, accountId, categoryId, transactionTypeId, note, description } = await request.json();
-
   try {
+    const {
+      date,
+      amount,
+      accountId,
+      categoryId,
+      transactionTypeId,
+      note,
+      description,
+    } = await updateTransactionSchema.validate(await request.json());
+
     const updatedTransaction = await prisma.transaction.update({
-      where: { id: parseInt(id) },
+      where: { id: parseInt(params.id) },
       data: {
         amount,
         note,

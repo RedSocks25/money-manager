@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
 
-import { categorySchema } from "@/validations/categoryValidations";
+import { categorySchema } from "@/validations/category";
 import { httpStatus } from "@/constants/httpStatus";
 
 
@@ -21,9 +21,6 @@ interface Segment {
  */
 export async function GET(request: Request, { params }: Segment) {
   try {
-
-    console.log(params.id)
-
     const category = await prisma.category.findUnique({
       where: {
         id: Number(params.id),

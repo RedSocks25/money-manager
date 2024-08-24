@@ -1,17 +1,33 @@
-import { httpStatus } from "@/constants/httpStatus";
-import prisma from "@/lib/prisma";
 import { NextResponse } from "next/server";
+import { URL } from "url";
+
+import { httpStatus } from "@/constants/httpStatus";
+import { TransactionParams } from "@/interfaces/queryParams";
+import prisma from "@/lib/prisma";
+import { createTransactionSchema } from "@/validations/transaction";
 
 
 /**
- * Handles GET requests to fetch all transactions.
+ * Handles GET requests to get transactions by category, by account or all transactions.
  * 
  * @param {Request} request - The incoming request object.
- * @returns {Promise<NextResponse>} - A response containing the list of transactions or an error message.
+ * @returns {Promise<NextResponse>} - A response containing the transactions or an error message.
  */
 export async function GET(request: Request) {
+
+  // Parse the query string to get the categoryId.
+  const url = new URL(request.url);
+  const { category, account } = Object.fromEntries(url.searchParams.entries()) as TransactionParams;
+
+
   try {
-    const transactions = await prisma.transaction.findMany();
+    // If the categoryId is provided get transactions by category, or get all transactions.
+    const transactions = await prisma.transaction.findMany({
+      where: {
+        categoryId: (!!category) ? parseInt(category) : undefined,
+        accountId: (!!account) ? parseInt(account) : undefined,
+      },
+    });
 
     return NextResponse.json(transactions, { status: httpStatus.OK });
   } catch (error) {
@@ -28,17 +44,26 @@ export async function GET(request: Request) {
  */
 export async function POST(request: Request) {
 
-  const { date, amount, accountId, categoryId, transactionTypeId, note} = await request.json();
-
   try {
+    const {
+      date,
+      amount,
+      accountId,
+      categoryId,
+      transactionTypeId,
+      note,
+      description,
+    } = await createTransactionSchema.validate(await request.json());
+
     const newTransaction = await prisma.transaction.create({
       data: {
+        date: date || new Date(Date.now()),
         amount,
-        note,
-        date: new Date(date),
         accountId,
         categoryId,
         transactionTypeId,
+        note,
+        description,
       },
     });
 

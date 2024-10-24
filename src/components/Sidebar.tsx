@@ -14,7 +14,7 @@ const SidebarMenuOptions = [
 
 export const Sidebar = ({ title }: Props) => {
   return (
-    <div className="h-screen w-64 bg-blue-600 text-white fixed top-0 left-0">
+    <div className="h-screen w-64 bg-blue-600 text-white fixed top-0 left-0 shadow-xl">
       <div className="p-4">
         <h1 className="text-2xl font-bold justify-center flex">{ title }</h1>
       </div>

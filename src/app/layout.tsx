@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Sidebar } from "@/components/Sidebar";
+import { Navbar } from "@/components/Navbar";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -24,7 +25,10 @@ export default function RootLayout({
       <body>
         <div className="flex">
           <Sidebar title={'Money Manager'} />
-          <div className="w-full ml-64">{children}</div>
+          <div className="w-full ml-64 pt-14">
+            <Navbar />
+            {children}
+          </div>
         </div>
       </body>
     </html>
